@@ -34,7 +34,7 @@ public class ProductDto {
         return product;
     }
 
-    public ProductDto fromProduct(Product product) {
+    public static ProductDto fromProduct(Product product) {
         ProductDto productDto = new ProductDto();
         productDto.setId(product.getId());
         productDto.setBrandId(product.getBrandId());

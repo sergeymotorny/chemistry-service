@@ -3,6 +3,8 @@ package com.motorny.ss.chemistryservice.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @Table(name = "Reviews")
@@ -26,4 +28,7 @@ public class Review {
 
     @Column(name = "Comment")
     private String comment;
+
+    @Column(name = "CreateReview")
+    private LocalDateTime createReview;
 }

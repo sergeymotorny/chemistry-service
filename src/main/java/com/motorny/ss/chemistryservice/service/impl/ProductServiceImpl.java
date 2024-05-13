@@ -1,12 +1,14 @@
 package com.motorny.ss.chemistryservice.service.impl;
 
 import com.motorny.ss.chemistryservice.dto.ProductDto;
+import com.motorny.ss.chemistryservice.exceptions.CustomEmptyDataException;
 import com.motorny.ss.chemistryservice.model.Product;
 import com.motorny.ss.chemistryservice.repository.ProductRepository;
 import com.motorny.ss.chemistryservice.service.ProductService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,23 +25,44 @@ public class ProductServiceImpl implements ProductService {
         List<Product> productList = productRepository.findAll();
 
         return productList.stream()
-                .map(this::mapToDto)
+                .map(ProductDto::fromProduct)
                 .collect(Collectors.toList());
     }
 
     @Override
     public ProductDto getProduct(long id) {
-        return null;
+        Optional<Product> optional = productRepository.findById(id);
+        Product product = optional.orElse(null);
+        return ProductDto.fromProduct(product);
     }
 
     @Override
-    public ProductDto createProduct(ProductDto productDto) {
-        return null;
+    public ProductDto createProduct(Product product) {
+        return ProductDto.fromProduct(productRepository.save(product));
     }
 
     @Override
     public void deleteProduct(long id) {
+        productRepository.deleteById(id);
+    }
 
+    @Override
+    public ProductDto updateProduct(Product source, Long id) {
+        Optional<Product> byId = productRepository.findById(id);
+
+        if (byId.isPresent()) {
+            Product prod = byId.get();
+            prod.setBrandId(source.getBrandId());
+            prod.setCategoryId(source.getCategoryId());
+            prod.setPrice(source.getPrice());
+            prod.setDescription(source.getDescription());
+            prod.setExpiryDate(source.getExpiryDate());
+            productRepository.save(prod);
+
+            return ProductDto.fromProduct(prod);
+        } else {
+            throw new CustomEmptyDataException("unable to update product");
+        }
     }
 
     private ProductDto mapToDto(Product product) {
