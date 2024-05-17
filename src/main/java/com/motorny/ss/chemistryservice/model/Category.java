@@ -3,7 +3,6 @@ package com.motorny.ss.chemistryservice.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -15,7 +14,7 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CategoryID", nullable = false)
-    private long id;
+    private Long id;
 
     @Column(name = "Name", nullable = false)
     private String name;

@@ -4,11 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -21,7 +19,7 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ProductID")
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "BrandID")

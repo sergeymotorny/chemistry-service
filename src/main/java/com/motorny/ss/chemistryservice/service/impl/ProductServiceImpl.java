@@ -1,7 +1,8 @@
 package com.motorny.ss.chemistryservice.service.impl;
 
 import com.motorny.ss.chemistryservice.dto.ProductDto;
-import com.motorny.ss.chemistryservice.exceptions.CustomEmptyDataException;
+import com.motorny.ss.chemistryservice.exceptions.ResourceNotFoundException;
+import com.motorny.ss.chemistryservice.mapper.ProductMapper;
 import com.motorny.ss.chemistryservice.model.Product;
 import com.motorny.ss.chemistryservice.repository.ProductRepository;
 import com.motorny.ss.chemistryservice.service.ProductService;
@@ -16,29 +17,35 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
+    private final ProductMapper productMapper;
+
+    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper) {
         this.productRepository = productRepository;
+        this.productMapper = productMapper;
     }
 
     @Override
-    public List<ProductDto> getAllProduct() {
+    public List<ProductDto> getAllProducts() {
         List<Product> productList = productRepository.findAll();
 
         return productList.stream()
-                .map(ProductDto::fromProduct)
+                .map(productMapper::toProductDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public ProductDto getProduct(long id) {
-        Optional<Product> optional = productRepository.findById(id);
-        Product product = optional.orElse(null);
-        return ProductDto.fromProduct(product);
+        Optional<Product> byId = productRepository.findById(id);
+        Product product = byId.orElse(null);
+        return productMapper.toProductDto(product);
     }
 
     @Override
-    public ProductDto createProduct(Product product) {
-        return ProductDto.fromProduct(productRepository.save(product));
+    public ProductDto createProduct(ProductDto productDto) {
+        Product product = productMapper.toProduct(productDto);
+        Product savedProduct = productRepository.save(product);
+
+        return productMapper.toProductDto(savedProduct);
     }
 
     @Override
@@ -47,26 +54,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto updateProduct(Product source, Long id) {
-        Optional<Product> byId = productRepository.findById(id);
+    public ProductDto updateProduct(ProductDto productDto, Long id) {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + id));
 
-        if (byId.isPresent()) {
-            Product prod = byId.get();
-            prod.setBrandId(source.getBrandId());
-            prod.setCategoryId(source.getCategoryId());
-            prod.setPrice(source.getPrice());
-            prod.setDescription(source.getDescription());
-            prod.setExpiryDate(source.getExpiryDate());
-            productRepository.save(prod);
+        existingProduct.setBrandId(productDto.getBrandId());
+        existingProduct.setCategoryId(productDto.getCategoryId());
+        existingProduct.setPrice(productDto.getPrice());
+        existingProduct.setDescription(productDto.getDescription());
+        existingProduct.setExpiryDate(productDto.getExpiryDate());
 
-            return ProductDto.fromProduct(prod);
-        } else {
-            throw new CustomEmptyDataException("unable to update product");
-        }
-    }
+        productRepository.save(existingProduct);
 
-    private ProductDto mapToDto(Product product) {
-        return new ProductDto(product.getId(), product.getBrandId(), product.getCategoryId(), product.getPrice(),
-                product.getDescription(), product.getExpiryDate());
+        return productMapper.toProductDto(existingProduct);
     }
 }
