@@ -2,19 +2,17 @@ package com.motorny.ss.chemistryservice.controller;
 
 import com.motorny.ss.chemistryservice.dto.BrandDto;
 import com.motorny.ss.chemistryservice.service.BrandService;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/b")
 public class BrandController {
 
     private final BrandService brandService;
-
-    public BrandController(BrandService brandService) {
-        this.brandService = brandService;
-    }
 
     @GetMapping("/brands")
     public List<BrandDto> getAllBrands() {

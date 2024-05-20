@@ -24,6 +24,6 @@ public class User {
     @Column(name = "Email", unique = true, nullable = false, length = 50)
     private String email;
 
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Review> reviews = new LinkedHashSet<>();
 }

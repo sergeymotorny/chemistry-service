@@ -6,6 +6,7 @@ import com.motorny.ss.chemistryservice.mapper.BrandMapper;
 import com.motorny.ss.chemistryservice.model.Brand;
 import com.motorny.ss.chemistryservice.repository.BrandRepository;
 import com.motorny.ss.chemistryservice.service.BrandService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,15 +14,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class BrandServiceImpl implements BrandService {
 
     private final BrandRepository brandRepository;
     private final BrandMapper brandMapper;
-
-    public BrandServiceImpl(BrandRepository brandRepository, BrandMapper brandMapper) {
-        this.brandRepository = brandRepository;
-        this.brandMapper = brandMapper;
-    }
 
     @Override
     public List<BrandDto> getAllBrands() {

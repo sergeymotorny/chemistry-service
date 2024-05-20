@@ -2,11 +2,13 @@ package com.motorny.ss.chemistryservice.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Data
+@EqualsAndHashCode(exclude = "product")
 @Table(name = "Reviews")
 public class Review {
 
@@ -17,11 +19,11 @@ public class Review {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ProductID", nullable = false)
-    private Product productId;
+    private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserID", nullable = false)
-    private User userId;
+    private User user;
 
     @Column(name = "Rating")
     private short rating;

@@ -13,7 +13,7 @@ public class Brand {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "BrandID", nullable = false)
+    @Column(name = "BrandID")
     private Long id;
 
     @Column(name = "Name", nullable = false)
@@ -25,7 +25,7 @@ public class Brand {
     @Column(name = "YearFounded", nullable = false)
     private int yearFounded;
 
-    @OneToMany(mappedBy = "brandId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
     private Set<Product> products = new LinkedHashSet<>();
 
 }

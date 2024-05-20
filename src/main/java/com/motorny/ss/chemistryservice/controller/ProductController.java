@@ -1,21 +1,18 @@
 package com.motorny.ss.chemistryservice.controller;
 
 import com.motorny.ss.chemistryservice.dto.ProductDto;
-import com.motorny.ss.chemistryservice.model.Product;
 import com.motorny.ss.chemistryservice.service.ProductService;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/p")
 public class ProductController {
 
     private final ProductService productService;
-
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
 
     @GetMapping("/products")
     public List<ProductDto> getAllProducts() {

@@ -1,9 +1,8 @@
 package com.motorny.ss.chemistryservice.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,8 +10,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "Products")
 public class Product {
@@ -21,13 +18,13 @@ public class Product {
     @Column(name = "ProductID")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "BrandID")
-    private Brand brandId;
+    private Brand brand;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CategoryID", nullable = false)
-    private Category categoryId;
+    private Category category;
 
     @Column(columnDefinition = "Price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
@@ -38,6 +35,6 @@ public class Product {
     @Column(name = "ExpiryDate")
     private LocalDate expiryDate;
 
-    @OneToMany(mappedBy = "productId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Review> reviews = new LinkedHashSet<>();
 }

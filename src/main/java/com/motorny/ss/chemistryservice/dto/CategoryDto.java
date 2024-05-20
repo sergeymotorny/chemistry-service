@@ -1,12 +1,11 @@
 package com.motorny.ss.chemistryservice.dto;
 
-import lombok.Data;
+import lombok.*;
 
 @Data
-public class BrandDto {
+public class CategoryDto {
 
     private Long id;
     private String name;
-    private String country;
-    private int yearFounded;
+    private String description;
 }

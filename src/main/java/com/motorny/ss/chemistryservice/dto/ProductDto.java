@@ -1,19 +1,20 @@
 package com.motorny.ss.chemistryservice.dto;
 
-import com.motorny.ss.chemistryservice.model.Brand;
-import com.motorny.ss.chemistryservice.model.Category;
-import lombok.*;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Data
 public class ProductDto {
 
-    private long id;
-    private Brand brandId;
-    private Category categoryId;
+    private Long id;
+    private Long brandId;
+    private Long categoryId;
     private BigDecimal price;
     private String description;
     private LocalDate expiryDate;
+    private Set<Long> reviewIds;
 }
