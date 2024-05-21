@@ -35,6 +35,6 @@ public class Product {
     @Column(name = "ExpiryDate")
     private LocalDate expiryDate;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private Set<Review> reviews = new LinkedHashSet<>();
 }

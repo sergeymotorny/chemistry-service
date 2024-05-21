@@ -8,6 +8,6 @@ public interface CategoryService {
     List<CategoryDto> getAllCategories();
     CategoryDto getCategory(long id);
     CategoryDto createCategory(CategoryDto categoryDto);
-    void deleteCategory(long id);
+    String deleteCategory(long id);
     CategoryDto updateCategory(CategoryDto categoryDto, long id);
 }

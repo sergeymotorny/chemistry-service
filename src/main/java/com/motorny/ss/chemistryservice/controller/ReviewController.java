@@ -3,6 +3,8 @@ package com.motorny.ss.chemistryservice.controller;
 import com.motorny.ss.chemistryservice.dto.ReviewDto;
 import com.motorny.ss.chemistryservice.service.ReviewService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +32,8 @@ public class ReviewController {
     }
 
     @DeleteMapping("/review/{id}")
-    public void deleteReview(@PathVariable("id") Long id) {
-        reviewService.deleteReview(id);
+    public ResponseEntity<String> deleteReview(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(reviewService.deleteReview(id), HttpStatus.OK);
     }
 
     @PutMapping("/review/{id}")

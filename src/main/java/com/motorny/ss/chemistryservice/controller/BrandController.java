@@ -3,6 +3,8 @@ package com.motorny.ss.chemistryservice.controller;
 import com.motorny.ss.chemistryservice.dto.BrandDto;
 import com.motorny.ss.chemistryservice.service.BrandService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +32,8 @@ public class BrandController {
     }
 
     @DeleteMapping("/brand/{id}")
-    public void deleteBrand(@PathVariable("id") Long id) {
-        brandService.deleteBrand(id);
+    public ResponseEntity<String> deleteBrand(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(brandService.deleteBrand(id), HttpStatus.OK);
     }
 
     @PutMapping("/brand/{id}")

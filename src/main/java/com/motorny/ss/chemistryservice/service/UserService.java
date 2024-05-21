@@ -8,6 +8,6 @@ public interface UserService {
     List<UserDto> getAllUsers();
     UserDto getUser(long id);
     UserDto createUser(UserDto userDto);
-    void deleteUser(long id);
+    String deleteUser(long id);
     UserDto updateUser(UserDto userDto, long id);
 }

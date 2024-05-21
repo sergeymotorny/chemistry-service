@@ -8,6 +8,6 @@ public interface BrandService {
     List<BrandDto> getAllBrands();
     BrandDto getBrand(long id);
     BrandDto createBrand(BrandDto brandDto);
-    void deleteBrand(long id);
+    String deleteBrand(long id);
     BrandDto updateBrand(BrandDto brandDto, long id);
 }

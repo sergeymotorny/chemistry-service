@@ -11,6 +11,7 @@ import com.motorny.ss.chemistryservice.repository.ReviewRepository;
 import com.motorny.ss.chemistryservice.repository.UserRepository;
 import com.motorny.ss.chemistryservice.service.ReviewService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
@@ -38,7 +40,12 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewDto getReview(long id) {
         Optional<Review> byId = reviewRepository.findById(id);
-        Review review = byId.orElse(null);
+
+        if (!byId.isPresent()) {
+            throw new ResourceNotFoundException("Review not found with id " + id);
+        }
+
+        Review review = byId.get();
 
         return reviewMapper.toReviewDto(review);
     }
@@ -62,8 +69,18 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void deleteReview(long id) {
-        reviewRepository.deleteById(id);
+    public String deleteReview(long id) {
+        Optional<Review> byId = reviewRepository.findById(id);
+
+        if (byId.isPresent()) {
+            reviewRepository.deleteById(id);
+            return "Review with id: " + id + " was successfully remover";
+        } else {
+            log.error("Review not found with id {}", id);
+            throw new ResourceNotFoundException("Review not found with id " + id);
+        }
+
+
     }
 
     @Override

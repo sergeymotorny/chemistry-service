@@ -3,6 +3,8 @@ package com.motorny.ss.chemistryservice.controller;
 import com.motorny.ss.chemistryservice.dto.CategoryDto;
 import com.motorny.ss.chemistryservice.service.CategoryService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +32,8 @@ public class CategoryController {
     }
 
     @DeleteMapping("/category/{id}")
-    public void deleteCategory(@PathVariable("id") Long id) {
-        categoryService.deleteCategory(id);
+    public ResponseEntity<String> deleteCategory(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(categoryService.deleteCategory(id), HttpStatus.OK);
     }
 
     @PutMapping("/category/{id}")

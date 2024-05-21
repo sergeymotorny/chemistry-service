@@ -7,6 +7,7 @@ import com.motorny.ss.chemistryservice.model.Category;
 import com.motorny.ss.chemistryservice.repository.CategoryRepository;
 import com.motorny.ss.chemistryservice.service.CategoryService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
@@ -32,7 +34,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto getCategory(long id) {
         Optional<Category> byId = categoryRepository.findById(id);
-        Category category = byId.orElse(null);
+
+        if (!byId.isPresent()) {
+            throw new ResourceNotFoundException("Category not found with id " + id);
+        }
+
+        Category category = byId.get();
+
         return categoryMapper.toCategoryDto(category);
     }
 
@@ -44,8 +52,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategory(long id) {
-        categoryRepository.deleteById(id);
+    public String deleteCategory(long id) {
+        Optional<Category> byId = categoryRepository.findById(id);
+
+        if (byId.isPresent()) {
+            categoryRepository.deleteById(id);
+            return "Category with id: " + id + " was successfully remover";
+        } else {
+            log.error("Category not found with id {}", id);
+            throw new ResourceNotFoundException("Category not found with id " + id);
+        }
     }
 
     @Override

@@ -13,6 +13,7 @@ import com.motorny.ss.chemistryservice.repository.ProductRepository;
 import com.motorny.ss.chemistryservice.repository.ReviewRepository;
 import com.motorny.ss.chemistryservice.service.ProductService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
@@ -42,7 +44,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDto getProduct(long id) {
         Optional<Product> byId = productRepository.findById(id);
-        Product product = byId.orElse(null);
+
+        if (!byId.isPresent()) {
+            throw new ResourceNotFoundException("Product not found with id " + id);
+        }
+
+        Product product = byId.get();
+
         return productMapper.toProductDto(product);
     }
 
@@ -65,8 +73,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteProduct(long id) {
-        productRepository.deleteById(id);
+    public String deleteProduct(long id) {
+        Optional<Product> byId = productRepository.findById(id);
+
+        if (byId.isPresent()) {
+            productRepository.deleteById(id);
+            return "Product with id: " + id + " was successfully remover";
+        } else {
+            log.error("Product not found with id {}", id);
+            throw new ResourceNotFoundException("Product not found with id " + id);
+        }
     }
 
     @Override

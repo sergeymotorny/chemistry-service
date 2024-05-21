@@ -4,10 +4,14 @@ import com.motorny.ss.chemistryservice.dto.BrandDto;
 import com.motorny.ss.chemistryservice.exceptions.ResourceNotFoundException;
 import com.motorny.ss.chemistryservice.mapper.BrandMapper;
 import com.motorny.ss.chemistryservice.model.Brand;
+import com.motorny.ss.chemistryservice.model.User;
 import com.motorny.ss.chemistryservice.repository.BrandRepository;
 import com.motorny.ss.chemistryservice.service.BrandService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class BrandServiceImpl implements BrandService {
 
     private final BrandRepository brandRepository;
@@ -32,7 +37,12 @@ public class BrandServiceImpl implements BrandService {
     @Override
     public BrandDto getBrand(long id) {
         Optional<Brand> byId = brandRepository.findById(id);
-        Brand brand = byId.orElse(null);
+
+        if (!byId.isPresent()) {
+            throw new ResourceNotFoundException("Brand not found with id " + id);
+        }
+
+        Brand brand = byId.get();
 
         return brandMapper.toBrandDto(brand);
     }
@@ -41,12 +51,21 @@ public class BrandServiceImpl implements BrandService {
     public BrandDto createBrand(BrandDto brandDto) {
         Brand brand = brandMapper.toBrand(brandDto);
         Brand saveBrand = brandRepository.save(brand);
+
         return brandMapper.toBrandDto(saveBrand);
     }
 
     @Override
-    public void deleteBrand(long id) {
-        brandRepository.deleteById(id);
+    public String deleteBrand(long id) {
+        Optional<Brand> byId = brandRepository.findById(id);
+
+        if (byId.isPresent()) {
+            brandRepository.deleteById(id);
+            return "Brand with id: " + id + " was successfully remover";
+        } else {
+            log.error("Brand not found with id {}", id);
+            throw new ResourceNotFoundException("Brand not found with id " + id);
+        }
     }
 
     @Override

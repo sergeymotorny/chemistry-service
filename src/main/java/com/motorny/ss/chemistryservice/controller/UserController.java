@@ -3,6 +3,8 @@ package com.motorny.ss.chemistryservice.controller;
 import com.motorny.ss.chemistryservice.dto.UserDto;
 import com.motorny.ss.chemistryservice.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +32,8 @@ public class UserController {
     }
 
     @DeleteMapping("/user/{id}")
-    public void deleteReview(@PathVariable("id") Long id) {
-        userService.deleteUser(id);
+    public ResponseEntity<String> deleteReview(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(userService.deleteUser(id), HttpStatus.OK);
     }
 
     @PutMapping("/user/{id}")
