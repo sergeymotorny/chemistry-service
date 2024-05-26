@@ -9,6 +9,7 @@ import com.motorny.ss.chemistryservice.service.CategoryService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.toCategoryDto(category);
     }
 
+    @Transactional
     @Override
     public CategoryDto createCategory(CategoryDto categoryDto) {
         Category category = categoryMapper.toCategory(categoryDto);
@@ -64,6 +66,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
+    @Transactional
     @Override
     public CategoryDto updateCategory(CategoryDto categoryDto, long id) {
         Category existingCategory = categoryRepository.findById(id)

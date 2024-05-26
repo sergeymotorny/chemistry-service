@@ -1,6 +1,6 @@
 package com.motorny.ss.chemistryservice.dto;
 
-import lombok.*;
+import lombok.Data;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

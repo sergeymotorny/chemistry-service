@@ -11,15 +11,18 @@ import com.motorny.ss.chemistryservice.repository.BrandRepository;
 import com.motorny.ss.chemistryservice.repository.CategoryRepository;
 import com.motorny.ss.chemistryservice.repository.ProductRepository;
 import com.motorny.ss.chemistryservice.repository.ReviewRepository;
+import com.motorny.ss.chemistryservice.repository.prod.PRepository;
 import com.motorny.ss.chemistryservice.service.ProductService;
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
+
 
 @Service
 @AllArgsConstructor
@@ -31,6 +34,9 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final ReviewRepository reviewRepository;
     private final ProductMapper productMapper;
+    private PRepository pRepository;
+
+    private EntityManager entityManager;
 
     @Override
     public List<ProductDto> getAllProducts() {
@@ -54,6 +60,7 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toProductDto(product);
     }
 
+    @Transactional
     @Override
     public ProductDto createProduct(ProductDto productDto) {
         Product product = productMapper.toProduct(productDto);
@@ -85,6 +92,7 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    @Transactional
     @Override
     public ProductDto updateProduct(ProductDto productDto, long id) {
         Product existingProduct = productRepository.findById(id)
@@ -112,4 +120,63 @@ public class ProductServiceImpl implements ProductService {
 
         return productMapper.toProductDto(existingProduct);
     }
+
+    @Transactional
+    @Override
+    public String updateExpiryDate(Long productId, LocalDate newExpiryDate) {
+        Optional<Product> existingProduct = productRepository.findById(productId);
+
+        if (existingProduct.isPresent()) {
+            Product product = existingProduct.get();
+
+            product.setExpiryDate(newExpiryDate);
+
+            productRepository.save(product);
+            return "Product with id: " + productId + " was successfully updated";
+        } else {
+            throw new ResourceNotFoundException("Product not found with id " + productId);
+        }
+    }
+
+    @Override
+    public List<ProductDto> findProductsByPrice(Integer amount) {
+        List<Product> productList = productRepository.findProductByPrice(amount);
+
+        if (!productList.isEmpty()) {
+            return productList.stream()
+                    .map(productMapper::toProductDto)
+                    .collect(Collectors.toList());
+        } else {
+            throw new ResourceNotFoundException("Product not found with price " + amount);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<ProductDto> findProductsByBrandId(Long id) {
+        List<Product> productList = pRepository.findProductsByBrandId(id);
+
+        return productList.stream()
+                .map(productMapper::toProductDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Map<String, Object>> getCountProductsByPriceAndBrandCategory() {
+        List<Object[]> productList = productRepository.countProductsByPriceAndBrandCategory();
+        List<Map<String, Object>> response = new ArrayList<>();
+
+        for (Object[] objects : productList) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("name_brand", objects[0]);
+            item.put("name_category", objects[1]);
+            item.put("price", objects[2]);
+            item.put("count", objects[3]);
+            response.add(item);
+        }
+
+        return response;
+    }
+
+
 }

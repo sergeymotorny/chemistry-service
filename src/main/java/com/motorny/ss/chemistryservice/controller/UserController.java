@@ -2,6 +2,7 @@ package com.motorny.ss.chemistryservice.controller;
 
 import com.motorny.ss.chemistryservice.dto.UserDto;
 import com.motorny.ss.chemistryservice.service.UserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping("/user")
-    public UserDto createUser(@RequestBody UserDto userDto) {
+    public UserDto createUser(@Valid @RequestBody UserDto userDto) {
         return userService.createUser(userDto);
     }
 
@@ -37,7 +38,12 @@ public class UserController {
     }
 
     @PutMapping("/user/{id}")
-    public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable("id") Long id) {
+    public UserDto updateUser(@Valid @RequestBody UserDto userDto, @PathVariable("id") Long id) {
         return userService.updateUser(userDto, id);
+    }
+
+    @PutMapping("/user/update/{id}")
+    public ResponseEntity<String> updateUserAndRollback(@Valid @PathVariable("id") Long id, @RequestParam String name) {
+        return new ResponseEntity<>(userService.updateUserAndRollback(id, name), HttpStatus.OK);
     }
 }

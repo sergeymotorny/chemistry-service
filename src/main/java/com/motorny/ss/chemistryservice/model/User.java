@@ -2,9 +2,9 @@ package com.motorny.ss.chemistryservice.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.LinkedHashSet;
@@ -21,9 +21,12 @@ public class User {
     @Column(name = "UserID")
     private Long id;
 
+    @NotBlank(message = "Name cannot be empty")
+    @Size(max = 20)
     @Column(name = "Name", nullable = false, length = 30)
     private String name;
 
+    @Size(max = 50)
     @Email
     @Column(name = "Email", unique = true, nullable = false, length = 50)
     private String email;

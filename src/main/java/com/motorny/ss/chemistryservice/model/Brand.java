@@ -1,6 +1,8 @@
 package com.motorny.ss.chemistryservice.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.LinkedHashSet;
@@ -16,12 +18,18 @@ public class Brand {
     @Column(name = "BrandID")
     private Long id;
 
+    @NotBlank
+    @Size(max = 50)
     @Column(name = "Name", nullable = false)
     private String name;
 
+    @NotBlank
+    @Size(max = 30)
     @Column(name = "Country", length = 50)
     private String country;
 
+    @NotBlank
+    @Size(min = 3, max = 30)
     @Column(name = "YearFounded", nullable = false)
     private int yearFounded;
 

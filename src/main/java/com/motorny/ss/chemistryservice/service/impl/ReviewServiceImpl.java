@@ -13,6 +13,7 @@ import com.motorny.ss.chemistryservice.service.ReviewService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +51,7 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewMapper.toReviewDto(review);
     }
 
+    @Transactional
     @Override
     public ReviewDto createReview(ReviewDto reviewDto) {
         Review review = reviewMapper.toReview(reviewDto);
@@ -83,6 +85,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     }
 
+    @Transactional
     @Override
     public ReviewDto updateReview(ReviewDto reviewDto, long id) {
         Review existingReview = reviewRepository.findById(id)
@@ -104,4 +107,14 @@ public class ReviewServiceImpl implements ReviewService {
 
         return reviewMapper.toReviewDto(existingReview);
     }
+
+    @Override
+    public List<ReviewDto> getAllReviewsOrderedByRating() {
+        List<Review> reviewList = reviewRepository.findReviewByOrderByRating();
+
+        return reviewList.stream()
+                .map(reviewMapper::toReviewDto)
+                .collect(Collectors.toList());
+    }
+
 }

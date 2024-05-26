@@ -10,4 +10,6 @@ public interface ReviewService {
     ReviewDto createReview(ReviewDto reviewDto);
     String deleteReview(long id);
     ReviewDto updateReview(ReviewDto reviewDto, long id);
+    List<ReviewDto> getAllReviewsOrderedByRating();
+
 }

@@ -3,14 +3,15 @@ package com.motorny.ss.chemistryservice.service.impl;
 import com.motorny.ss.chemistryservice.dto.UserDto;
 import com.motorny.ss.chemistryservice.exceptions.ResourceNotFoundException;
 import com.motorny.ss.chemistryservice.mapper.UserMapper;
-import com.motorny.ss.chemistryservice.model.Review;
 import com.motorny.ss.chemistryservice.model.User;
 import com.motorny.ss.chemistryservice.repository.UserRepository;
 import com.motorny.ss.chemistryservice.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,6 +46,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserDto(user);
     }
 
+    @Transactional
     @Override
     public UserDto createUser(UserDto userDto) {
         User user = userMapper.toUser(userDto);
@@ -66,8 +68,30 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Transactional
     @Override
     public UserDto updateUser(UserDto userDto, long id) {
-        return null;
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
+
+        existingUser.setName(userDto.getName());
+        existingUser.setEmail(userDto.getEmail());
+
+        userRepository.save(existingUser);
+
+        return userMapper.toUserDto(existingUser);
+    }
+
+    @Transactional
+    @Override
+    public String updateUserAndRollback(Long id, String userName) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
+
+        existingUser.setName(userName);
+
+        userRepository.save(existingUser);
+
+        return "Rollback a user id " + id + " update transaction";
     }
 }

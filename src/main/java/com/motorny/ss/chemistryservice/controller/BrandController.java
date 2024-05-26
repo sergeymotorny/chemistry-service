@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -39,5 +40,10 @@ public class BrandController {
     @PutMapping("/brand/{id}")
     public BrandDto updateBrand(@RequestBody BrandDto brandDto, @PathVariable("id") Long id) {
        return brandService.updateBrand(brandDto, id);
+    }
+
+    @GetMapping("/brand/count/country")
+    public List<Map<String, Object>> getBrandsCountByCountry(@RequestParam String country) {
+        return brandService.countBrandsByCountryInCity(country);
     }
 }

@@ -1,6 +1,8 @@
 package com.motorny.ss.chemistryservice.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.LinkedHashSet;
@@ -16,9 +18,12 @@ public class Category {
     @Column(name = "CategoryID", nullable = false)
     private Long id;
 
+    @NotBlank
+    @Size(max = 50)
     @Column(name = "Name", nullable = false)
     private String name;
 
+    @Size(max = 1000)
     @Column(name = "Description")
     private String description;
 

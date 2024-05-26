@@ -1,8 +1,8 @@
 package com.motorny.ss.chemistryservice.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
-import org.springframework.data.jpa.repository.EntityGraph;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,6 +29,7 @@ public class Product {
     @Column(columnDefinition = "Price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
+    @Size(max = 1000)
     @Column(name = "Description")
     private String description;
 

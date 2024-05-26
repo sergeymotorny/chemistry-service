@@ -11,10 +11,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +47,7 @@ public class BrandServiceImpl implements BrandService {
         return brandMapper.toBrandDto(brand);
     }
 
+    @Transactional
     @Override
     public BrandDto createBrand(BrandDto brandDto) {
         Brand brand = brandMapper.toBrand(brandDto);
@@ -68,6 +69,7 @@ public class BrandServiceImpl implements BrandService {
         }
     }
 
+    @Transactional
     @Override
     public BrandDto updateBrand(BrandDto brandDto, long id) {
         Brand existingBrand = brandRepository.findById(id)
@@ -80,5 +82,19 @@ public class BrandServiceImpl implements BrandService {
         brandRepository.save(existingBrand);
 
         return brandMapper.toBrandDto(existingBrand);
+    }
+
+    @Override
+    public List<Map<String, Object>> countBrandsByCountryInCity(String city) {
+        List<Object[]> results = brandRepository.countBrandsByCountry(city);
+        List<Map<String, Object>> response = new ArrayList<>();
+
+        for (Object[] result : results) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("country", result[0]);
+            item.put("count", result[1]);
+            response.add(item);
+        }
+        return response;
     }
 }

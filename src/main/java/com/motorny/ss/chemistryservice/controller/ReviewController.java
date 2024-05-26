@@ -40,4 +40,9 @@ public class ReviewController {
     public ReviewDto updateReview(@RequestBody ReviewDto reviewDto, @PathVariable("id") Long id) {
         return reviewService.updateReview(reviewDto, id);
     }
+
+    @GetMapping("/review/sorted-by-rating")
+    public List<ReviewDto> getAllReviewsOrderedByRating() {
+        return reviewService.getAllReviewsOrderedByRating();
+    }
 }
