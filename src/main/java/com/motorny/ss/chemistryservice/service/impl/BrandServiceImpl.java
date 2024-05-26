@@ -4,24 +4,26 @@ import com.motorny.ss.chemistryservice.dto.BrandDto;
 import com.motorny.ss.chemistryservice.exceptions.ResourceNotFoundException;
 import com.motorny.ss.chemistryservice.mapper.BrandMapper;
 import com.motorny.ss.chemistryservice.model.Brand;
+import com.motorny.ss.chemistryservice.model.User;
 import com.motorny.ss.chemistryservice.repository.BrandRepository;
 import com.motorny.ss.chemistryservice.service.BrandService;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
+@Slf4j
 public class BrandServiceImpl implements BrandService {
 
     private final BrandRepository brandRepository;
     private final BrandMapper brandMapper;
-
-    public BrandServiceImpl(BrandRepository brandRepository, BrandMapper brandMapper) {
-        this.brandRepository = brandRepository;
-        this.brandMapper = brandMapper;
-    }
 
     @Override
     public List<BrandDto> getAllBrands() {
@@ -35,23 +37,39 @@ public class BrandServiceImpl implements BrandService {
     @Override
     public BrandDto getBrand(long id) {
         Optional<Brand> byId = brandRepository.findById(id);
-        Brand brand = byId.orElse(null);
+
+        if (!byId.isPresent()) {
+            throw new ResourceNotFoundException("Brand not found with id " + id);
+        }
+
+        Brand brand = byId.get();
 
         return brandMapper.toBrandDto(brand);
     }
 
+    @Transactional
     @Override
     public BrandDto createBrand(BrandDto brandDto) {
         Brand brand = brandMapper.toBrand(brandDto);
         Brand saveBrand = brandRepository.save(brand);
+
         return brandMapper.toBrandDto(saveBrand);
     }
 
     @Override
-    public void deleteBrand(long id) {
-        brandRepository.deleteById(id);
+    public String deleteBrand(long id) {
+        Optional<Brand> byId = brandRepository.findById(id);
+
+        if (byId.isPresent()) {
+            brandRepository.deleteById(id);
+            return "Brand with id: " + id + " was successfully remover";
+        } else {
+            log.error("Brand not found with id {}", id);
+            throw new ResourceNotFoundException("Brand not found with id " + id);
+        }
     }
 
+    @Transactional
     @Override
     public BrandDto updateBrand(BrandDto brandDto, long id) {
         Brand existingBrand = brandRepository.findById(id)
@@ -64,5 +82,19 @@ public class BrandServiceImpl implements BrandService {
         brandRepository.save(existingBrand);
 
         return brandMapper.toBrandDto(existingBrand);
+    }
+
+    @Override
+    public List<Map<String, Object>> countBrandsByCountryInCity(String city) {
+        List<Object[]> results = brandRepository.countBrandsByCountry(city);
+        List<Map<String, Object>> response = new ArrayList<>();
+
+        for (Object[] result : results) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("country", result[0]);
+            item.put("count", result[1]);
+            response.add(item);
+        }
+        return response;
     }
 }

@@ -1,0 +1,235 @@
+@startuml
+title Class Diagram for com.motorny.ss.chemistryservice
+
+abstract class BaseController {
+
+}
+
+class BrandController extends BaseController {
+    + getAllBrands(): List<BrandDto>
+    + getBrand(id: Long): BrandDto
+    + createBrand(brand: BrandDto): BrandDto
+    + updateBrand(id: Long, brand: BrandDto): BrandDto
+    + deleteBrand(id: Long)
+    + getBrandsCountByCountry: List<Map<String, Object>>
+
+    - brandService: BrandService
+}
+
+class CategoryController extends BaseController {
+    + createCategory(category: CategoryDto): CategoryDto
+    + updateCategory(id: Long, category: CategoryDto): CategoryDto
+
+    - categoryService: CategoryService
+}
+
+class ProductController extends BaseController {
+    + createProduct(product: ProductDto): ProductDto
+    + updateProduct(id: Long, product: ProductDto): ProductDto
+    + getProductsByPrice(Integer amount): List<ProductDto>
+    + getProductsByBrandId(Long id): List<ProductDto>
+    + getCountProductsByPrice: List<Map<String, Object>>
+    + updateExpiryDate(Long id, LocalDate newExpiryDate): ResponseEntity<String>
+
+    - productService: ProductService
+}
+
+class ReviewController extends BaseController {
+    + createReview(review: ReviewDto): ReviewDto
+    + updateReview(id: Long, review: ReviewDto): ReviewDto
+    + getAllReviewsOrderedByRating(): List<ReviewDto>
+
+    - reviewService: ReviewService
+}
+
+class UserController extends BaseController {
+    + createUser(user: UserDto): UserDto
+    + updateUser(id: Long, user: UserDto): UserDto
+    + updateUserAndRollback(Long id, String name): ResponseEntity<String>
+
+    - userService: UserService
+}
+
+interface BaseService {
+}
+
+interface BrandService extends BaseService {
+    + getAll(): List<BrandDto>
+    + getById(id: Long): BrandDto
+    + save(brand: BrandDto): BrandDto
+    + update(id: Long, brand: BrandDto): BrandDto
+    + delete(id: Long)
+}
+
+interface CategoryService extends BaseService {
+    + save(category: CategoryDto): CategoryDto
+    + update(id: Long, category: CategoryDto): CategoryDto
+}
+
+interface ProductService extends BaseService {
+    + save(product: ProductDto): ProductDto
+    + update(id: Long, product: ProductDto): ProductDto
+}
+
+interface ReviewService extends BaseService {
+    + save(review: ReviewDto): ReviewDto
+    + update(id: Long, review: Review): ReviewDto
+}
+
+interface UserService extends BaseService {
+    + save(user: UserDto): UserDto
+    + update(id: Long, user: UserDto): UserDto
+}
+
+class BrandServiceImpl implements BrandService {
+    + getAll(): List<Brand>
+    + getById(id: Long): Brand
+    + create(brand: Brand): Brand
+    + updateBrand(id: Long, brand: Brand): Brand
+    + deleteBrand(id: Long)
+
+    - brandRepository: BrandRepository
+}
+
+class CategoryServiceImpl implements CategoryService {
+    + save(category: Category): Category
+    + update(id: Long, category: Category): Category
+
+    - categoryRepository: CategoryRepository
+}
+
+class ProductServiceImpl implements ProductService {
+    + save(product: Product): Product
+    + update(id: Long, product: Product): Product
+
+    - productRepository: ProductRepository
+}
+
+class ReviewServiceImpl implements ReviewService {
+    + save(review: Review): Review
+    + update(id: Long, review: Review): Review
+
+    - reviewRepository: ReviewRepository
+}
+
+class UserServiceImpl implements UserService {
+    + save(user: User): User
+    + update(id: Long, user: User): User
+
+    - userRepository: UserRepository
+}
+
+interface BaseRepository {
+}
+
+interface BrandRepository extends BaseRepository {
+    + findAll(): List<Brand>
+    + findById(id: Long): Brand
+    + save(brand: Brand): Brand
+    + deleteById(id: Long)
+}
+
+interface CategoryRepository extends BaseRepository {
+    + save(category: Category): Category
+    + deleteById(id: Long)
+}
+
+interface ProductRepository extends BaseRepository {
+    + save(product: Product): Product
+    + deleteById(id: Long)
+}
+
+interface ReviewRepository extends BaseRepository {
+    + save(review: Review): Review
+    + deleteById(id: Long)
+}
+
+interface UserRepository extends BaseRepository {
+    + save(user: User): User
+    + deleteById(id: Long)
+}
+
+class Brand {
+    + id: Long
+    + name: String
+    + country: String
+    + yearFounded: int
+    + products: Set<Product>
+}
+
+class Category {
+    + id: Long
+    + name: String
+    + description: String
+    + products: Set<Product>
+}
+
+class Product {
+    + id: Long
+    + brand: Brand
+    + category: Category
+    + price: BigDecimal
+    + description: String
+    + expiryDate: LocalDate
+    + reviews: Set<Review>
+}
+
+class Review {
+    + id: Long
+    + product: Product
+    + user: User
+    + rating: short
+    + comment: String
+    + createReview: LocalDateTime
+}
+
+class User {
+    + id: Long
+    + name: String
+    + email: String
+    reviews: Set<Review>
+}
+
+BaseController <|-- BrandController
+BaseController <|-- CategoryController
+BaseController <|-- ProductController
+BaseController <|-- ReviewController
+BaseController <|-- UserController
+
+BaseService <|-- BrandService
+BaseService <|-- CategoryService
+BaseService <|-- ProductService
+BaseService <|-- ReviewService
+BaseService <|-- UserService
+
+BrandService <|.. BrandServiceImpl
+CategoryService <|.. CategoryServiceImpl
+ProductService <|.. ProductServiceImpl
+ReviewService <|.. ReviewServiceImpl
+UserService <|.. UserServiceImpl
+
+BaseRepository <|-- BrandRepository
+BaseRepository <|-- CategoryRepository
+BaseRepository <|-- ProductRepository
+BaseRepository <|-- ReviewRepository
+BaseRepository <|-- UserRepository
+
+BrandController --> BrandService
+CategoryController --> CategoryService
+ProductController --> ProductService
+ReviewController --> ReviewService
+UserController --> UserService
+
+BrandServiceImpl --> BrandRepository
+CategoryServiceImpl --> CategoryRepository
+ProductServiceImpl --> ProductRepository
+ReviewServiceImpl --> ReviewRepository
+UserServiceImpl --> UserRepository
+
+BrandRepository --> Brand
+CategoryRepository --> Category
+ProductRepository --> Product
+ReviewRepository --> Review
+UserRepository --> User
+
+@enduml
